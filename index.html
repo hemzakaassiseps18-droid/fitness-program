@@ -6,7 +6,7 @@
     <title>FitPlan Pro | برنامج اللياقة الاحترافي</title>
     <meta
       name="description"
-      content="برنامج لياقة بدنية احترافي للتدريب والالتزام والنجاح في 8 أسابيع."
+      content="منصة اللياقة البدنية الاحترافية مع تسجيل الدخول، متابعة التقدم، الأهداف، والرسوم البيانية."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,37 +17,101 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-shell">
-      <aside class="sidebar">
-        <div class="brand">
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <div class="brand-row">
           <div class="brand-mark">F</div>
           <div>
-            <p class="brand-top">FitPlan</p>
+            <p class="brand-kicker">FitPlan</p>
+            <h2>Pro</h2>
+          </div>
+        </div>
+
+        <div class="auth-header">
+          <h1 id="authTitle">تسجيل الدخول</h1>
+          <p id="authSubtitle">مرحباً بعودتك! تابع تنفيذك اليومي.</p>
+        </div>
+
+        <form id="authForm" class="auth-form">
+          <div id="signupFields" class="signup-fields hidden">
+            <div class="row two-col">
+              <label>
+                <span>الاسم الأول</span>
+                <input type="text" id="firstName" placeholder="أحمد" />
+              </label>
+              <label>
+                <span>الاسم الأخير</span>
+                <input type="text" id="lastName" placeholder="محمد" />
+              </label>
+            </div>
+          </div>
+
+          <label>
+            <span>البريد الإلكتروني</span>
+            <input type="email" id="email" placeholder="name@example.com" required />
+          </label>
+
+          <label>
+            <span>كلمة المرور</span>
+            <input type="password" id="password" placeholder="••••••••" required />
+          </label>
+
+          <div id="rememberRow" class="remember-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="rememberMe" />
+              <span>تذكرني</span>
+            </label>
+            <a href="#">نسيت كلمة المرور؟</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="submitButton">
+            دخول
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          <span id="switchText">ليس لديك حساب؟</span>
+          <button id="toggleAuthMode" type="button" class="text-button">
+            إنشاء حساب جديد
+          </button>
+        </div>
+
+        <div id="authMessage" class="auth-message" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div id="appScreen" class="app-screen hidden">
+      <aside class="sidebar">
+        <div class="brand-row">
+          <div class="brand-mark">F</div>
+          <div>
+            <p class="brand-kicker">FitPlan</p>
             <h2>Pro</h2>
           </div>
         </div>
 
         <nav class="nav">
-          <button class="nav-item active" data-target="dashboard">
+          <button class="nav-item active" data-target="dashboardSection">
             <span>لوحة التحكم</span>
           </button>
-          <button class="nav-item" data-target="program">
-            <span>الخطة التدريبية</span>
+          <button class="nav-item" data-target="goalsSection">
+            <span>الأهداف</span>
           </button>
-          <button class="nav-item" data-target="tracker">
-            <span>متتبع اليوم</span>
+          <button class="nav-item" data-target="workoutsSection">
+            <span>التمارين</span>
           </button>
-          <button class="nav-item" data-target="nutrition">
-            <span>التغذية</span>
+          <button class="nav-item" data-target="analyticsSection">
+            <span>الإحصائيات</span>
+          </button>
+          <button class="nav-item" data-target="profileSection">
+            <span>الملف الشخصي</span>
           </button>
         </nav>
 
         <div class="mini-card">
           <p class="mini-label">المستوى الحالي</p>
           <h3>مبتدئ / متوسط</h3>
-          <div class="mini-progress">
-            <span style="width: 68%"></span>
-          </div>
+          <div class="mini-progress"><span style="width: 68%"></span></div>
         </div>
       </aside>
 
@@ -55,15 +119,16 @@
         <header class="topbar">
           <div>
             <p class="eyebrow">برنامج 8 أسابيع</p>
-            <h1>لياقة بدنية احترافية</h1>
+            <h1 id="welcomeTitle">مرحباً، أحمد</h1>
           </div>
+
           <div class="top-actions">
             <button id="saveAllBtn" class="btn btn-primary">حفظ التقدم</button>
-            <button id="resetBtn" class="btn btn-ghost">إعادة الضبط</button>
+            <button id="logoutBtn" class="btn btn-ghost">تسجيل الخروج</button>
           </div>
         </header>
 
-        <section id="dashboard" class="panel active-panel">
+        <section id="dashboardSection" class="panel active-panel">
           <div class="stats-grid">
             <article class="stat-card gradient-green">
               <span>جلسات مكتملة</span>
@@ -92,9 +157,16 @@
               <div class="panel-head">
                 <h3>التقدم الأسبوعي</h3>
               </div>
+
               <div class="progress-ring-block">
                 <div class="ring-wrap">
                   <svg viewBox="0 0 120 120" class="ring-svg">
+                    <defs>
+                      <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#38d39f" />
+                        <stop offset="100%" stop-color="#7dd3fc" />
+                      </linearGradient>
+                    </defs>
                     <circle cx="60" cy="60" r="48" class="ring-bg"></circle>
                     <circle cx="60" cy="60" r="48" class="ring-progress" id="ringProgress"></circle>
                   </svg>
@@ -109,7 +181,8 @@
               <div class="panel-head">
                 <h3>مؤشرات اليوم</h3>
               </div>
-              <ul class="check-list" id="dailyChecklist">
+
+              <ul class="check-list">
                 <li>
                   <label>
                     <input type="checkbox" id="habitSleep" />
@@ -139,79 +212,114 @@
           </div>
         </section>
 
-        <section id="program" class="panel hidden-panel">
+        <section id="goalsSection" class="panel hidden-panel">
+          <div class="panel-head">
+            <h3>الأهداف والبرامج</h3>
+          </div>
+          <div class="goal-grid">
+            <article class="goal-card accent-green">
+              <div class="goal-top">
+                <span class="goal-badge">فقدان الوزن</span>
+                <strong>72%</strong>
+              </div>
+              <p>من 82 كجم إلى 75 كجم خلال 8 أسابيع</p>
+              <div class="progress-bar"><span style="width:72%"></span></div>
+            </article>
+            <article class="goal-card accent-blue">
+              <div class="goal-top">
+                <span class="goal-badge">بناء عضلات</span>
+                <strong>58%</strong>
+              </div>
+              <p>زيادة القوة وإضافة كتلة عضلية بشكل متوازن</p>
+              <div class="progress-bar"><span style="width:58%"></span></div>
+            </article>
+            <article class="goal-card accent-gold">
+              <div class="goal-top">
+                <span class="goal-badge">لياقة عامة</span>
+                <strong>81%</strong>
+              </div>
+              <p>تحسين اللياقة والتحمل والمرونة في الحياة اليومية</p>
+              <div class="progress-bar"><span style="width:81%"></span></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="workoutsSection" class="panel hidden-panel">
           <div class="panel-head split-head">
-            <h3>جدول الأسبوع</h3>
+            <h3>الجدول الأسبوعي</h3>
             <button id="nextWeekBtn" class="btn btn-soft">تبديل الأسبوع</button>
           </div>
-
-          <div class="week-grid" id="weekGrid"></div>
+          <div id="weekGrid" class="week-grid"></div>
         </section>
 
-        <section id="tracker" class="panel hidden-panel">
+        <section id="analyticsSection" class="panel hidden-panel">
           <div class="panel-head">
-            <h3>متتبع التدريب اليومي</h3>
+            <h3>الإحصائيات</h3>
           </div>
 
-          <div class="tracker-grid">
-            <div class="form-group">
-              <label for="exerciseDate">تاريخ اليوم</label>
-              <input id="exerciseDate" type="date" />
+          <div class="analytics-grid">
+            <div class="chart-card">
+              <h4>التمارين الأسبوعية</h4>
+              <div class="bar-chart">
+                <span style="height: 40%"></span>
+                <span style="height: 70%"></span>
+                <span style="height: 50%"></span>
+                <span style="height: 85%"></span>
+                <span style="height: 65%"></span>
+                <span style="height: 90%"></span>
+                <span style="height: 75%"></span>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="weightInput">الوزن (كجم)</label>
-              <input id="weightInput" type="number" step="0.1" placeholder="75.5" />
-            </div>
-            <div class="form-group">
-              <label for="waterInput">كمية الماء (لتر)</label>
-              <input id="waterInput" type="number" step="0.5" min="0" max="10" value="2.5" />
-            </div>
-            <div class="form-group">
-              <label for="caloriesInput">السعرات</label>
-              <input id="caloriesInput" type="number" step="50" min="0" value="1800" />
-            </div>
-          </div>
 
-          <div class="today-actions">
-            <button id="saveDailyBtn" class="btn btn-primary">حفظ اليوم</button>
-            <button id="exportBtn" class="btn btn-ghost">تصدير JSON</button>
+            <div class="chart-card">
+              <h4>مؤشرات الماء</h4>
+              <div class="mini-metrics">
+                <div><strong>14.5L</strong><span>إجمالي</span></div>
+                <div><strong>2.1L</strong><span>متوسط يومي</span></div>
+                <div><strong>92%</strong><span>الهدف</span></div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="nutrition" class="panel hidden-panel">
+        <section id="profileSection" class="panel hidden-panel">
           <div class="panel-head">
-            <h3>خطة التغذية</h3>
+            <h3>الملف الشخصي</h3>
           </div>
 
-          <div class="nutrition-layout">
-            <div class="meal-card">
-              <h4>الإفطار</h4>
-              <ul>
-                <li>شوفان + فواكه + لبن أو زبادي</li>
-                <li>مكسرات قليلة</li>
-              </ul>
+          <div class="profile-grid">
+            <div class="profile-card">
+              <div class="avatar">AM</div>
+              <h4>أحمد محمد</h4>
+              <p>مستخدم محترف • مستوى متوسط</p>
             </div>
-            <div class="meal-card">
-              <h4>الغداء</h4>
-              <ul>
-                <li>دجاج أو سمك أو لحم قليل الدهن</li>
-                <li>أرز بني / بطاطا / سلطة</li>
-              </ul>
-            </div>
-            <div class="meal-card">
-              <h4>العشاء</h4>
-              <ul>
-                <li>بروتين خفيف + خضار</li>
-                <li>تجنب الوجبات السريعة</li>
-              </ul>
-            </div>
-            <div class="meal-card">
-              <h4>الوجبات الخفيفة</h4>
-              <ul>
-                <li>زبادي</li>
-                <li>فاكهة</li>
-                <li>مكسرات</li>
-              </ul>
+
+            <div class="profile-card form-card">
+              <div class="row two-col">
+                <label>
+                  <span>الوزن</span>
+                  <input type="number" value="82" />
+                </label>
+                <label>
+                  <span>الطول</span>
+                  <input type="number" value="178" />
+                </label>
+              </div>
+              <div class="row two-col">
+                <label>
+                  <span>العمر</span>
+                  <input type="number" value="28" />
+                </label>
+                <label>
+                  <span>الهدف</span>
+                  <select>
+                    <option>فقدان الوزن</option>
+                    <option>بناء العضلات</option>
+                    <option>اللياقة العامة</option>
+                  </select>
+                </label>
+              </div>
+              <button class="btn btn-primary">حفظ البيانات</button>
             </div>
           </div>
         </section>

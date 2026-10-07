@@ -218,8 +218,8 @@ select:focus {
 .auth-switch {
   margin-top: 18px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 8px;
   color: var(--muted);
   flex-wrap: wrap;
@@ -546,8 +546,8 @@ select:focus {
 
 .goal-top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
