@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlan Pro | برنامج اللياقة الاحترافي</title>
+    <meta
+      name="description"
+      content="برنامج لياقة بدنية احترافي للتدريب والالتزام والنجاح في 8 أسابيع."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">F</div>
+          <div>
+            <p class="brand-top">FitPlan</p>
+            <h2>Pro</h2>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-target="dashboard">
+            <span>لوحة التحكم</span>
+          </button>
+          <button class="nav-item" data-target="program">
+            <span>الخطة التدريبية</span>
+          </button>
+          <button class="nav-item" data-target="tracker">
+            <span>متتبع اليوم</span>
+          </button>
+          <button class="nav-item" data-target="nutrition">
+            <span>التغذية</span>
+          </button>
+        </nav>
+
+        <div class="mini-card">
+          <p class="mini-label">المستوى الحالي</p>
+          <h3>مبتدئ / متوسط</h3>
+          <div class="mini-progress">
+            <span style="width: 68%"></span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">برنامج 8 أسابيع</p>
+            <h1>لياقة بدنية احترافية</h1>
+          </div>
+          <div class="top-actions">
+            <button id="saveAllBtn" class="btn btn-primary">حفظ التقدم</button>
+            <button id="resetBtn" class="btn btn-ghost">إعادة الضبط</button>
+          </div>
+        </header>
+
+        <section id="dashboard" class="panel active-panel">
+          <div class="stats-grid">
+            <article class="stat-card gradient-green">
+              <span>جلسات مكتملة</span>
+              <strong id="completedCount">0</strong>
+              <small>من 21 جلسة</small>
+            </article>
+            <article class="stat-card gradient-blue">
+              <span>معدل الالتزام</span>
+              <strong id="commitmentRate">0%</strong>
+              <small>هذا الأسبوع</small>
+            </article>
+            <article class="stat-card gradient-gold">
+              <span>مياه اليوم</span>
+              <strong id="waterState">0L</strong>
+              <small>هدف 2.5L</small>
+            </article>
+            <article class="stat-card gradient-pink">
+              <span>السعرات</span>
+              <strong id="caloriesState">0</strong>
+              <small>كـ kcal</small>
+            </article>
+          </div>
+
+          <div class="summary-grid">
+            <div class="panel-box">
+              <div class="panel-head">
+                <h3>التقدم الأسبوعي</h3>
+              </div>
+              <div class="progress-ring-block">
+                <div class="ring-wrap">
+                  <svg viewBox="0 0 120 120" class="ring-svg">
+                    <circle cx="60" cy="60" r="48" class="ring-bg"></circle>
+                    <circle cx="60" cy="60" r="48" class="ring-progress" id="ringProgress"></circle>
+                  </svg>
+                  <div class="ring-center">
+                    <strong id="ringPercent">0%</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-box">
+              <div class="panel-head">
+                <h3>مؤشرات اليوم</h3>
+              </div>
+              <ul class="check-list" id="dailyChecklist">
+                <li>
+                  <label>
+                    <input type="checkbox" id="habitSleep" />
+                    <span>نوم 7–8 ساعات</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" id="habitWater" />
+                    <span>شرب الماء</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" id="habitProtein" />
+                    <span>وجبة بروتين</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" id="habitStretch" />
+                    <span>تمدد خفيف</span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="program" class="panel hidden-panel">
+          <div class="panel-head split-head">
+            <h3>جدول الأسبوع</h3>
+            <button id="nextWeekBtn" class="btn btn-soft">تبديل الأسبوع</button>
+          </div>
+
+          <div class="week-grid" id="weekGrid"></div>
+        </section>
+
+        <section id="tracker" class="panel hidden-panel">
+          <div class="panel-head">
+            <h3>متتبع التدريب اليومي</h3>
+          </div>
+
+          <div class="tracker-grid">
+            <div class="form-group">
+              <label for="exerciseDate">تاريخ اليوم</label>
+              <input id="exerciseDate" type="date" />
+            </div>
+            <div class="form-group">
+              <label for="weightInput">الوزن (كجم)</label>
+              <input id="weightInput" type="number" step="0.1" placeholder="75.5" />
+            </div>
+            <div class="form-group">
+              <label for="waterInput">كمية الماء (لتر)</label>
+              <input id="waterInput" type="number" step="0.5" min="0" max="10" value="2.5" />
+            </div>
+            <div class="form-group">
+              <label for="caloriesInput">السعرات</label>
+              <input id="caloriesInput" type="number" step="50" min="0" value="1800" />
+            </div>
+          </div>
+
+          <div class="today-actions">
+            <button id="saveDailyBtn" class="btn btn-primary">حفظ اليوم</button>
+            <button id="exportBtn" class="btn btn-ghost">تصدير JSON</button>
+          </div>
+        </section>
+
+        <section id="nutrition" class="panel hidden-panel">
+          <div class="panel-head">
+            <h3>خطة التغذية</h3>
+          </div>
+
+          <div class="nutrition-layout">
+            <div class="meal-card">
+              <h4>الإفطار</h4>
+              <ul>
+                <li>شوفان + فواكه + لبن أو زبادي</li>
+                <li>مكسرات قليلة</li>
+              </ul>
+            </div>
+            <div class="meal-card">
+              <h4>الغداء</h4>
+              <ul>
+                <li>دجاج أو سمك أو لحم قليل الدهن</li>
+                <li>أرز بني / بطاطا / سلطة</li>
+              </ul>
+            </div>
+            <div class="meal-card">
+              <h4>العشاء</h4>
+              <ul>
+                <li>بروتين خفيف + خضار</li>
+                <li>تجنب الوجبات السريعة</li>
+              </ul>
+            </div>
+            <div class="meal-card">
+              <h4>الوجبات الخفيفة</h4>
+              <ul>
+                <li>زبادي</li>
+                <li>فاكهة</li>
+                <li>مكسرات</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="dayTemplate">
+      <article class="day-card">
+        <div class="day-head">
+          <h4></h4>
+          <span class="tag"></span>
+        </div>
+        <ul class="exercise-list"></ul>
+        <label class="checkbox-row">
+          <input type="checkbox" />
+          <span>تمت الجلسة</span>
+        </label>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
