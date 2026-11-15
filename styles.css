@@ -525,3 +525,52 @@ button, input {
     flex: 1;
   }
 }
+
+
+/* K6 Trainer Studio responsive refinements */
+.brand-mark { font-size: 1.25rem; letter-spacing: -0.06em; }
+.brand h2 { font-size: 1.12rem; line-height: 1.35; }
+.week-switcher { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.week-switcher strong { min-width: 112px; text-align: center; }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.section-note { color: var(--muted); font-size: .88rem; line-height: 1.8; margin: 0 0 16px; }
+.nav-item:focus-visible, .btn:focus-visible, input:focus-visible { outline: 2px solid var(--secondary); outline-offset: 3px; }
+.form-group input { width: 100%; min-width: 0; }
+@media (max-width: 980px) {
+  .page-shell { gap: 14px; }
+  .sidebar { gap: 14px; }
+  .nav { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .nav-item { flex: 0 0 auto; white-space: nowrap; text-align: center; }
+  .mini-card { margin-top: 0; }
+}
+@media (max-width: 620px) {
+  .page-shell { padding: 10px; gap: 12px; }
+  .sidebar { padding: 14px; border-radius: 20px; }
+  .brand { padding: 2px; }
+  .brand-mark { width: 44px; height: 44px; border-radius: 13px; }
+  .brand h2 { font-size: 1rem; }
+  .nav { gap: 7px; }
+  .nav-item { padding: 9px 12px; font-size: .82rem; }
+  .main-content { width: 100%; }
+  .topbar { padding: 6px 2px 14px; gap: 12px; }
+  .topbar h1 { font-size: 1.55rem; }
+  .top-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .top-actions .btn { min-width: 0; padding: 10px 8px; font-size: .82rem; }
+  .panel { padding: 14px; border-radius: 18px; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat-card { min-height: 105px; padding: 12px; border-radius: 15px; }
+  .stat-card span, .stat-card small { font-size: .76rem; }
+  .stat-card strong { font-size: 1.65rem; }
+  .summary-grid { gap: 12px; }
+  .panel-box { padding: 14px; }
+  .progress-ring-block { min-height: 180px; }
+  .ring-wrap { width: 145px; height: 145px; }
+  .split-head { align-items: flex-start; flex-direction: column; }
+  .week-switcher { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 6px; }
+  .week-switcher .btn { padding: 9px 10px; }
+  .week-switcher strong { min-width: 0; font-size: .88rem; }
+  .week-grid, .nutrition-layout, .tracker-grid { grid-template-columns: minmax(0, 1fr); }
+  .day-card { min-height: 0; }
+  .today-actions { display: grid; grid-template-columns: 1fr; }
+  .today-actions .btn { width: 100%; }
+}
