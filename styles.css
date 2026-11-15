@@ -525,3 +525,87 @@ button, input {
     flex: 1;
   }
 }
+
+
+/* K6 Trainer Studio responsive refinements */
+.brand-mark { font-size: 1.25rem; letter-spacing: -0.06em; }
+.brand h2 { font-size: 1.12rem; line-height: 1.35; }
+.week-switcher { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.week-switcher strong { min-width: 112px; text-align: center; }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.section-note { color: var(--muted); font-size: .88rem; line-height: 1.8; margin: 0 0 16px; }
+.nav-item:focus-visible, .btn:focus-visible, input:focus-visible { outline: 2px solid var(--secondary); outline-offset: 3px; }
+.form-group input { width: 100%; min-width: 0; }
+@media (max-width: 980px) {
+  .page-shell { gap: 14px; }
+  .sidebar { gap: 14px; }
+  .nav { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .nav-item { flex: 0 0 auto; white-space: nowrap; text-align: center; }
+  .mini-card { margin-top: 0; }
+}
+@media (max-width: 620px) {
+  .page-shell { padding: 10px; gap: 12px; }
+  .sidebar { padding: 14px; border-radius: 20px; }
+  .brand { padding: 2px; }
+  .brand-mark { width: 44px; height: 44px; border-radius: 13px; }
+  .brand h2 { font-size: 1rem; }
+  .nav { gap: 7px; }
+  .nav-item { padding: 9px 12px; font-size: .82rem; }
+  .main-content { width: 100%; }
+  .topbar { padding: 6px 2px 14px; gap: 12px; }
+  .topbar h1 { font-size: 1.55rem; }
+  .top-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .top-actions .btn { min-width: 0; padding: 10px 8px; font-size: .82rem; }
+  .panel { padding: 14px; border-radius: 18px; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat-card { min-height: 105px; padding: 12px; border-radius: 15px; }
+  .stat-card span, .stat-card small { font-size: .76rem; }
+  .stat-card strong { font-size: 1.65rem; }
+  .summary-grid { gap: 12px; }
+  .panel-box { padding: 14px; }
+  .progress-ring-block { min-height: 180px; }
+  .ring-wrap { width: 145px; height: 145px; }
+  .split-head { align-items: flex-start; flex-direction: column; }
+  .week-switcher { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 6px; }
+  .week-switcher .btn { padding: 9px 10px; }
+  .week-switcher strong { min-width: 0; font-size: .88rem; }
+  .week-grid, .nutrition-layout, .tracker-grid { grid-template-columns: minmax(0, 1fr); }
+  .day-card { min-height: 0; }
+  .today-actions { display: grid; grid-template-columns: 1fr; }
+  .today-actions .btn { width: 100%; }
+}
+
+
+/* K6 exercise library and program builder */
+.library-tools, .builder-settings, .builder-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; }
+.library-tools input, .library-tools select, .form-group select { width:100%; min-width:0; border:1px solid var(--line); border-radius:13px; padding:11px 13px; background:#101b2d; color:var(--text); font:inherit; }
+.exercise-library-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+.exercise-card { border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.025); padding:14px; }
+.exercise-card h4 { margin:0 0 7px; }
+.exercise-card p, .builder-exercise-row p, .saved-program-row p { color:var(--muted); margin:0 0 9px; font-size:.86rem; }
+.builder-exercise-form { padding:16px; border:1px solid var(--line); border-radius:17px; background:rgba(255,255,255,.025); margin:18px 0; }
+.builder-exercise-form h4, .saved-programs-wrap h4 { margin:0 0 14px; }
+.builder-exercise-form > .btn { margin-top:12px; }
+.builder-list-head { display:flex; justify-content:space-between; align-items:center; margin-top:22px; }
+.builder-list-head h4 { margin:0; }
+.builder-exercise-list, .saved-programs-list { display:grid; gap:9px; }
+.builder-exercise-row, .saved-program-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02); }
+.builder-exercise-row strong, .saved-program-row strong { display:block; margin-bottom:5px; }
+.remove-exercise { color:#ffb5bb; padding:8px 12px; }
+.empty-state { color:var(--muted); padding:14px; border:1px dashed var(--line); border-radius:13px; margin:0; }
+.saved-programs-wrap { margin-top:26px; }
+.saved-program-actions { display:flex; gap:7px; flex-wrap:wrap; }
+.saved-program-actions .btn { padding:8px 12px; font-size:.82rem; }
+@media(max-width:620px) {
+ .library-tools, .builder-settings, .builder-fields, .exercise-library-grid { grid-template-columns:minmax(0,1fr); }
+ .builder-exercise-row, .saved-program-row { align-items:flex-start; }
+ .saved-program-row { flex-direction:column; }
+ .saved-program-actions { width:100%; }
+ .saved-program-actions .btn { flex:1; }
+}
+
+/* K6 studio schedule, progression, media, coach PDF and clients */
+.builder-session{border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}.builder-session-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:8px}.builder-session-head strong{color:var(--primary)}.exercise-thumb{display:block;width:110px;height:75px;object-fit:cover;border-radius:9px;margin:8px 0}.media-link{display:block;color:var(--secondary);font-size:.85rem;margin-top:5px}.progression-preview,.coach-branding{margin-top:20px;padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}.progression-preview .panel-head{margin-bottom:12px}.progression-preview select{background:#101b2d;color:var(--text);border:1px solid var(--line);padding:8px;border-radius:10px}.progression-line{padding:8px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:.88rem;line-height:1.7}.coach-branding summary{cursor:pointer;font-weight:700;color:var(--primary)}.coach-branding .builder-settings{margin-top:15px}
+@media(max-width:620px){.builder-session-head{align-items:flex-start}.builder-session-head .btn{padding:7px 9px;font-size:.75rem}.progression-preview{padding:12px}.saved-program-row{flex-direction:column;align-items:flex-start}}
+
+.exercise-video{display:block;width:min(100%,420px);aspect-ratio:16/9;border:0;border-radius:12px;margin:10px 0;background:#000}video.exercise-video{height:auto;max-height:260px}
