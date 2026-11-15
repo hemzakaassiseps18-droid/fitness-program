@@ -399,6 +399,102 @@
     });
   }
 
+
+  const CLIENT_STORAGE="k6-studio-clients", COACH_STORAGE="k6-studio-coach";
+  let builderSessions=[], clients=read(CLIENT_STORAGE,[]), coachProfile=read(COACH_STORAGE,{}), editingClientId=null;
+  if(!Array.isArray(clients))clients=[];
+  const safeUrl=v=>{try{const u=new URL(String(v||"").trim());return ["https:","http:"].includes(u.protocol)?u.href:"";}catch{return "";}};
+  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function flatExercises(){return builderSessions.flatMap(s=>s.exercises);}
+  function repsPlus(value,n){const m=String(value).match(/^(\d+)(?:\s*[-–]\s*(\d+))?$/);if(!m)return value;const a=+m[1]+n,b=+(m[2]||m[1])+n;return a===b?String(a):a+"-"+b;}
+  function makeWeeks(duration,sessions){
+    return Array.from({length:duration},(_,i)=>{
+      const w=i+1;let phase="تأسيس وتعلم الأداء",sd=0,rd=0,deload=false,hint="اختر حملاً يسمح بأداء التكرارات بتقنية سليمة واترك 2-3 تكرارات احتياطية.";
+      if(duration===4){if(w===2){phase="زيادة التكرارات";rd=1;}if(w===3){phase="زيادة الحجم التدريبي";rd=1;sd=1;}if(w===4){phase="تخفيف واستشفاء";sd=-1;deload=true;hint="خفّض الحجم بنحو 30% واستعد للمرحلة التالية.";}}
+      else if(duration===8){if(w===2){phase="زيادة التكرارات";rd=1;}if(w===3){phase="زيادة الحجم";rd=1;sd=1;}if(w===4){phase="أسبوع تخفيف";sd=-1;deload=true;hint="خفّض الحجم 25-35%."; }if(w===5){phase="بناء المرحلة الثانية";hint="إذا أكملت الحد الأعلى بتقنية جيدة، زد الحمل تدريجياً 2-5%."; }if(w===6){phase="تقدم التكرارات";rd=1;}if(w===7){phase="أسبوع أداء مرتفع";rd=1;hint="اترك 1-2 تكرار احتياطي ولا تتدرب حتى الفشل."; }if(w===8){phase="استشفاء وتقييم";sd=-1;deload=true;hint="خفّض الحجم 30-40% وقيّم التقدم.";}}
+      else{if(w===2||w===3){phase="تراكم تدريجي";rd=w-1;}if(w===4||w===8||w===12){phase="أسبوع تخفيف وتقييم";sd=-1;deload=true;hint="خفّض الحجم 30-40% مع المحافظة على التقنية."; }if(w>=5&&w<=7){phase="بناء القوة والحجم";if(w===7)sd=1;hint="عند بلوغ أعلى التكرارات بسهولة، زد الحمل 2-5%."; }if(w>=9&&w<=11){phase="تثبيت الأداء";rd=w-8;hint="حافظ على جودة الحركة واترك 1-2 تكرار احتياطي.";}}
+      return {week:w,phase,deload,hint,sessions:sessions.map(s=>({day:s.day,name:s.name,exercises:s.exercises.map(e=>({...e,sets:Math.max(1,e.sets+sd),reps:repsPlus(e.reps,rd),note:deload?"تخفيف":(sd||rd?"تقدم تدريجي":"الحمل المناسب")}))}))};
+    });
+  }
+  function renderProgression(){
+    const select=$("progressionWeek"),mount=$("progressionPreview");if(!select||!mount)return;
+    const duration=number($("programDuration").value,8),old=number(select.value,1);select.replaceChildren();
+    for(let n=1;n<=duration;n++){const o=document.createElement("option");o.value=n;o.textContent="الأسبوع "+n;select.appendChild(o);}select.value=String(Math.min(duration,old));
+    const w=makeWeeks(duration,builderSessions)[+select.value-1];mount.replaceChildren();
+    if(!builderSessions.length){const p=document.createElement("p");p.className="empty-state";p.textContent="أضف حصصاً وتمارين لعرض التدرج.";mount.appendChild(p);return;}
+    const p=document.createElement("p");p.textContent=w.phase+" — "+w.hint;mount.appendChild(p);
+    w.sessions.forEach(s=>{const line=document.createElement("p");line.className="progression-line";line.textContent=s.day+" / "+s.name+": "+s.exercises.map(e=>e.name+" ("+e.sets+"×"+e.reps+")").join("، ");mount.appendChild(line);});
+  }
+  function renderBuilderExercises(){
+    const mount=$("builderExerciseList");if(!mount)return;mount.replaceChildren();
+    $("builderExerciseCount").textContent=flatExercises().length+" تمارين · "+builderSessions.length+" حصص";
+    if(!builderSessions.length){const p=document.createElement("p");p.className="empty-state";p.textContent="حدد يوم الحصة وأضف التمارين.";mount.appendChild(p);}
+    builderSessions.forEach((s,si)=>{
+      const box=document.createElement("section");box.className="builder-session";const head=document.createElement("div");head.className="builder-session-head";
+      const title=document.createElement("strong");title.textContent=s.day+" — "+s.name;const removeSession=document.createElement("button");removeSession.className="btn btn-ghost";removeSession.type="button";removeSession.textContent="حذف الحصة";removeSession.onclick=()=>{builderSessions.splice(si,1);renderBuilderExercises();};head.append(title,removeSession);box.appendChild(head);
+      s.exercises.forEach((e,ei)=>{const row=document.createElement("article");row.className="builder-exercise-row";const info=document.createElement("div");const name=document.createElement("strong");name.textContent=e.name;const details=document.createElement("p");details.textContent=e.sets+" مجموعات × "+e.reps+" · راحة "+e.rest+" ثانية";info.append(name,details);
+        if(e.imageUrl){const img=document.createElement("img");img.src=e.imageUrl;img.alt=e.name;img.className="exercise-thumb";img.onerror=()=>img.remove();info.appendChild(img);}
+        if(e.videoUrl){const a=document.createElement("a");a.href=e.videoUrl;a.target="_blank";a.rel="noopener noreferrer";a.textContent="مشاهدة الفيديو";a.className="media-link";info.appendChild(a);}
+        const del=document.createElement("button");del.className="btn btn-ghost";del.type="button";del.textContent="حذف";del.onclick=()=>{s.exercises.splice(ei,1);if(!s.exercises.length)builderSessions.splice(si,1);renderBuilderExercises();};row.append(info,del);box.appendChild(row);});mount.appendChild(box);
+    });renderProgression();
+  }
+  function payload(){
+    const name=$("programName").value.trim();if(!name){alert("يرجى كتابة اسم البرنامج.");return null;}if(!flatExercises().length){alert("أضف تمارين إلى الحصص أولاً.");return null;}
+    const duration=number($("programDuration").value,8);return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,duration,sessionsPerWeek:number($("sessionsPerWeek").value,3),sessions:builderSessions.map(s=>({...s,exercises:s.exercises.map(e=>({...e}))})),weeks:makeWeeks(duration,builderSessions),updatedAt:new Date().toISOString()};
+  }
+  function downloadJSON(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  function printProgram(program,client){
+    const win=window.open("","_blank");if(!win){alert("اسمح بالنوافذ المنبثقة لإعداد ملف PDF.");return;}
+    const sessions=program.sessions||[{day:"الاثنين",name:"الحصة",exercises:program.exercises||[]}],weeks=program.weeks||makeWeeks(program.duration||8,sessions);
+    const weekHtml=weeks.map(w=>'<section class="week"><h2>الأسبوع '+w.week+' — '+esc(w.phase)+'</h2><p>'+esc(w.hint)+'</p>'+w.sessions.map(s=>'<h3>'+esc(s.day)+' · '+esc(s.name)+'</h3><table><tr><th>التمرين</th><th>المجموعات</th><th>التكرارات</th><th>الراحة</th></tr>'+s.exercises.map(e=>'<tr><td>'+esc(e.name)+(e.imageUrl?'<br><img class="eximg" src="'+esc(e.imageUrl)+'">':"")+(e.videoUrl?'<br><a href="'+esc(e.videoUrl)+'">فيديو التمرين</a>':"")+'</td><td>'+e.sets+'</td><td>'+esc(e.reps)+'</td><td>'+e.rest+' ث</td></tr>').join("")+'</table>').join("")+'</section>').join("");
+    const logo=coachProfile.logo?'<img class="logo" src="'+coachProfile.logo+'">':"";
+    const page='<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>'+esc(program.name)+'</title><style>@page{size:A4;margin:13mm}body{font-family:Arial,sans-serif;color:#18252d;line-height:1.55}header{display:flex;align-items:center;gap:15px;border-bottom:3px solid #178b68;padding-bottom:12px;margin-bottom:18px}.logo{max-width:85px;max-height:75px}h1,h2{color:#12684f}h2{font-size:17px;border-bottom:1px solid #bdd8ce;padding-bottom:5px}h3{font-size:14px;margin:14px 0 5px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #cbd5dc;padding:6px;text-align:right}th{background:#eaf4f0}.week{page-break-inside:avoid;margin-bottom:20px}.eximg{max-width:65px;max-height:55px}small{color:#586772}@media print{a{color:#12684f}}</style><body><header>'+logo+'<div><h1>'+esc(coachProfile.name||"K6 Trainer Studio")+'</h1><small>'+esc(coachProfile.phone||"")+' · '+esc(coachProfile.email||"")+'</small></div></header><h1>'+esc(program.name)+'</h1><p>المدة: '+program.duration+' أسابيع · الحصص: '+(program.sessionsPerWeek||sessions.length)+' أسبوعياً</p>'+(client?'<p>المتدرب: '+esc(client.name)+' · الهدف: '+esc(client.goal)+'</p>':"")+weekHtml+'<script>window.onload=()=>setTimeout(()=>window.print(),400)</script></body></html>';
+    win.document.open();win.document.write(page);win.document.close();
+  }
+  function renderSavedPrograms(){
+    const mount=$("savedProgramsList");if(!mount)return;mount.replaceChildren();
+    savedPrograms.forEach((p,i)=>{const row=document.createElement("article");row.className="saved-program-row";const info=document.createElement("div"),name=document.createElement("strong"),meta=document.createElement("p");name.textContent=p.name;meta.textContent=(p.duration||8)+" أسابيع · "+((p.sessions||[]).length||p.sessionsPerWeek||3)+" حصص · "+((p.sessions||[]).reduce((n,s)=>n+s.exercises.length,0)||p.exercises?.length||0)+" تمارين";info.append(name,meta);
+      const actions=document.createElement("div");actions.className="saved-program-actions";const open=document.createElement("button");open.className="btn btn-soft";open.textContent="فتح";open.onclick=()=>{ $("programName").value=p.name;$("programDuration").value=p.duration||8;$("sessionsPerWeek").value=p.sessionsPerWeek||3;builderSessions=p.sessions?p.sessions.map(s=>({...s,exercises:s.exercises.map(e=>({...e}))})): [{day:"الاثنين",name:"الحصة 1",exercises:(p.exercises||[]).map(e=>({...e}))}];renderBuilderExercises();showPanel("builder");};
+      const pdf=document.createElement("button");pdf.className="btn btn-ghost";pdf.textContent="PDF";pdf.onclick=()=>printProgram(p);
+      const del=document.createElement("button");del.className="btn btn-ghost";del.textContent="حذف";del.onclick=()=>{if(confirm("حذف البرنامج؟")){savedPrograms.splice(i,1);write(BUILDER_STORAGE,savedPrograms);renderSavedPrograms();renderClientProgramOptions();}};
+      actions.append(open,pdf,del);row.append(info,actions);mount.appendChild(row);});
+    if(!savedPrograms.length){const p=document.createElement("p");p.className="empty-state";p.textContent="لا توجد برامج محفوظة.";mount.appendChild(p);}renderClientProgramOptions();
+  }
+  function renderClientProgramOptions(){const sel=$("clientProgram");if(!sel)return;const old=sel.value;sel.replaceChildren();const empty=document.createElement("option");empty.value="";empty.textContent="بدون برنامج";sel.appendChild(empty);savedPrograms.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=p.name;sel.appendChild(o);});sel.value=old;}
+  function resetClient(){editingClientId=null;["clientName","clientAge","clientPhone"].forEach(id=>$(id).value="");$("clientGoal").selectedIndex=0;$("clientProgram").value="";$("saveClientBtn").textContent="حفظ ملف المتدرب";}
+  function renderClients(){
+    const mount=$("clientsList");if(!mount)return;mount.replaceChildren();$("clientCount").textContent=clients.length+" متدربين";
+    clients.forEach((c,i)=>{const row=document.createElement("article");row.className="saved-program-row";const info=document.createElement("div"),name=document.createElement("strong"),meta=document.createElement("p"),program=savedPrograms.find(p=>p.id===c.programId);name.textContent=c.name;meta.textContent="العمر: "+(c.age||"—")+" · "+(c.phone||"بدون هاتف")+" · "+c.goal+" · البرنامج: "+(program?.name||"غير مرتبط");info.append(name,meta);
+      const actions=document.createElement("div");actions.className="saved-program-actions";const edit=document.createElement("button");edit.className="btn btn-soft";edit.textContent="تعديل";edit.onclick=()=>{editingClientId=c.id;$("clientName").value=c.name;$("clientAge").value=c.age||"";$("clientPhone").value=c.phone||"";$("clientGoal").value=c.goal;$("clientProgram").value=c.programId||"";$("saveClientBtn").textContent="حفظ التعديلات";};
+      const pdf=document.createElement("button");pdf.className="btn btn-ghost";pdf.textContent="PDF";pdf.disabled=!program;pdf.onclick=()=>program&&printProgram(program,c);
+      const del=document.createElement("button");del.className="btn btn-ghost";del.textContent="حذف";del.onclick=()=>{if(confirm("حذف ملف المتدرب؟")){clients.splice(i,1);write(CLIENT_STORAGE,clients);renderClients();}};actions.append(edit,pdf,del);row.append(info,actions);mount.appendChild(row);});
+    if(!clients.length){const p=document.createElement("p");p.className="empty-state";p.textContent="لا توجد ملفات متدربين بعد.";mount.appendChild(p);}
+  }
+  function bindClients(){
+    renderClientProgramOptions();renderClients();
+    $("saveClientBtn")?.addEventListener("click",()=>{const name=$("clientName").value.trim(),age=$("clientAge").value;if(!name){alert("أدخل اسم المتدرب.");return;}if(age&&(number(age,NaN)<10||number(age,NaN)>100)){alert("تحقق من العمر.");return;}
+      const c={id:editingClientId||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),name,age:age?number(age):"",phone:$("clientPhone").value.trim(),goal:$("clientGoal").value,programId:$("clientProgram").value,updatedAt:new Date().toISOString()};const i=clients.findIndex(x=>x.id===c.id);if(i<0)clients.push(c);else clients[i]=c;write(CLIENT_STORAGE,clients);resetClient();renderClients();alert("تم حفظ ملف المتدرب.");});
+    $("cancelClientEdit")?.addEventListener("click",resetClient);
+  }
+  function bindCoach(){
+    $("coachName").value=coachProfile.name||"";$("coachPhone").value=coachProfile.phone||"";$("coachEmail").value=coachProfile.email||"";
+    $("coachLogo")?.addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")||file.size>1024*1024){alert("حجم الشعار يجب ألا يتجاوز 1 ميغابايت.");e.target.value="";return;}const reader=new FileReader();reader.onload=()=>{coachProfile.logo=reader.result;write(COACH_STORAGE,coachProfile);alert("تم حفظ الشعار.");};reader.readAsDataURL(file);});
+    $("saveCoachProfile")?.addEventListener("click",()=>{coachProfile={...coachProfile,name:$("coachName").value.trim(),phone:$("coachPhone").value.trim(),email:$("coachEmail").value.trim()};write(COACH_STORAGE,coachProfile);alert("تم حفظ بيانات المدرب.");});
+  }
+  function bindStudioExtensions(){
+    renderExerciseLibrary();renderBuilderSelect();renderBuilderExercises();renderSavedPrograms();bindCoach();bindClients();
+    $("exerciseSearch")?.addEventListener("input",renderExerciseLibrary);$("muscleFilter")?.addEventListener("change",renderExerciseLibrary);
+    $("addBuilderExercise")?.addEventListener("click",()=>{
+      const e=EXERCISES.find(x=>x.id===$("builderExercise").value),sets=number($("builderSets").value,NaN),rest=number($("builderRest").value,NaN),reps=$("builderReps").value.trim(),imageUrl=$("builderImageUrl").value.trim(),videoUrl=$("builderVideoUrl").value.trim();
+      if(!e||!Number.isInteger(sets)||sets<1||sets>20||!Number.isInteger(rest)||rest<0||rest>900||!reps){alert("تحقق من بيانات التمرين.");return;}if(imageUrl&&!safeUrl(imageUrl)||videoUrl&&!safeUrl(videoUrl)){alert("يجب أن تبدأ روابط الوسائط بـ http أو https.");return;}
+      const day=$("builderDay").value,sessionName=$("builderSessionName").value.trim()||"الحصة "+day;let s=builderSessions.find(x=>x.day===day&&x.name===sessionName);if(!s){s={id:String(Date.now()),day,name:sessionName,exercises:[]};builderSessions.push(s);}s.exercises.push({...e,sets,reps,rest,imageUrl:safeUrl(imageUrl),videoUrl:safeUrl(videoUrl)});$("builderImageUrl").value="";$("builderVideoUrl").value="";renderBuilderExercises();
+    });
+    $("programDuration")?.addEventListener("change",renderProgression);$("progressionWeek")?.addEventListener("change",renderProgression);
+    $("saveProgramBtn")?.addEventListener("click",()=>{const p=payload();if(!p)return;const i=savedPrograms.findIndex(x=>x.name.toLowerCase()===p.name.toLowerCase());if(i>=0){if(!confirm("استبدال البرنامج الموجود بالاسم نفسه؟"))return;savedPrograms[i]=p;}else savedPrograms.push(p);write(BUILDER_STORAGE,savedPrograms);renderSavedPrograms();alert("تم حفظ البرنامج وتدرجه الأسبوعي.");});
+    $("exportProgramBtn")?.addEventListener("click",()=>{const p=payload();if(p)downloadJSON(p,"k6-program-"+dateKey()+".json");});
+    $("printProgramBtn")?.addEventListener("click",()=>{const p=payload();if(p)printProgram(p);});
+  }
+
   function init() {
     bindNavigation();
     bindWeekNavigation();
@@ -406,6 +502,7 @@
     bindHabits();
     bindReset();
     bindProgramBuilder();
+    bindStudioExtensions();
     $("saveAllBtn")?.addEventListener("click", () => {
       savePlan();
       alert("تم حفظ التقدم بنجاح.");
