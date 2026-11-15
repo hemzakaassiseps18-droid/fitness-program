@@ -501,7 +501,6 @@
     bindDailyForm();
     bindHabits();
     bindReset();
-    bindProgramBuilder();
     bindStudioExtensions();
     $("saveAllBtn")?.addEventListener("click", () => {
       savePlan();
