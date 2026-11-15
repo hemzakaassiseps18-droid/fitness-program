@@ -574,3 +574,32 @@ button, input {
   .today-actions { display: grid; grid-template-columns: 1fr; }
   .today-actions .btn { width: 100%; }
 }
+
+
+/* K6 exercise library and program builder */
+.library-tools, .builder-settings, .builder-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; }
+.library-tools input, .library-tools select, .form-group select { width:100%; min-width:0; border:1px solid var(--line); border-radius:13px; padding:11px 13px; background:#101b2d; color:var(--text); font:inherit; }
+.exercise-library-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+.exercise-card { border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.025); padding:14px; }
+.exercise-card h4 { margin:0 0 7px; }
+.exercise-card p, .builder-exercise-row p, .saved-program-row p { color:var(--muted); margin:0 0 9px; font-size:.86rem; }
+.builder-exercise-form { padding:16px; border:1px solid var(--line); border-radius:17px; background:rgba(255,255,255,.025); margin:18px 0; }
+.builder-exercise-form h4, .saved-programs-wrap h4 { margin:0 0 14px; }
+.builder-exercise-form > .btn { margin-top:12px; }
+.builder-list-head { display:flex; justify-content:space-between; align-items:center; margin-top:22px; }
+.builder-list-head h4 { margin:0; }
+.builder-exercise-list, .saved-programs-list { display:grid; gap:9px; }
+.builder-exercise-row, .saved-program-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02); }
+.builder-exercise-row strong, .saved-program-row strong { display:block; margin-bottom:5px; }
+.remove-exercise { color:#ffb5bb; padding:8px 12px; }
+.empty-state { color:var(--muted); padding:14px; border:1px dashed var(--line); border-radius:13px; margin:0; }
+.saved-programs-wrap { margin-top:26px; }
+.saved-program-actions { display:flex; gap:7px; flex-wrap:wrap; }
+.saved-program-actions .btn { padding:8px 12px; font-size:.82rem; }
+@media(max-width:620px) {
+ .library-tools, .builder-settings, .builder-fields, .exercise-library-grid { grid-template-columns:minmax(0,1fr); }
+ .builder-exercise-row, .saved-program-row { align-items:flex-start; }
+ .saved-program-row { flex-direction:column; }
+ .saved-program-actions { width:100%; }
+ .saved-program-actions .btn { flex:1; }
+}
