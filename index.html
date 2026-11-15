@@ -22,6 +22,8 @@
           <button class="nav-item active" data-target="dashboard" aria-current="page">لوحة التحكم</button>
           <button class="nav-item" data-target="program">الخطة التدريبية</button>
           <button class="nav-item" data-target="tracker">متتبع اليوم</button>
+          <button class="nav-item" data-target="library">مكتبة التمارين</button>
+          <button class="nav-item" data-target="builder">منشئ البرامج</button>
           <button class="nav-item" data-target="nutrition">التغذية</button>
         </nav>
         <div class="mini-card">
@@ -96,6 +98,41 @@
             <button id="exportBtn" class="btn btn-ghost">تصدير نسخة احتياطية</button>
           </div>
           <p class="section-note">تُحفظ السجلات حسب التاريخ على هذا الجهاز والمتصفح. النسخ الاحتياطي يساعدك على الاحتفاظ بنسخة من بياناتك.</p>
+        </section>
+
+
+        <section id="library" class="panel hidden-panel">
+          <div class="panel-head"><h3>مكتبة التمارين</h3></div>
+          <div class="library-tools">
+            <input id="exerciseSearch" type="search" placeholder="ابحث عن تمرين أو عضلة..." aria-label="البحث في التمارين" />
+            <select id="muscleFilter" aria-label="تصفية حسب العضلة"><option value="">كل العضلات</option><option value="الصدر">الصدر</option><option value="الظهر">الظهر</option><option value="الأرجل">الأرجل</option><option value="الأكتاف">الأكتاف</option><option value="الذراعان">الذراعان</option><option value="البطن">البطن</option><option value="القلب والتنفس">القلب والتنفس</option></select>
+          </div>
+          <div id="exerciseLibraryGrid" class="exercise-library-grid"></div>
+          <p class="section-note">مكتبة أولية قابلة للتوسيع. أسماء التمارين وتعليماتها إرشادية، ويجب اختيار النسخة المناسبة لمستوى المتدرب وتجهيزاته.</p>
+        </section>
+
+        <section id="builder" class="panel hidden-panel">
+          <div class="panel-head"><h3>منشئ البرامج التدريبية</h3></div>
+          <div class="builder-settings">
+            <div class="form-group"><label for="programName">اسم البرنامج</label><input id="programName" type="text" maxlength="70" placeholder="مثال: برنامج القوة للمبتدئين" /></div>
+            <div class="form-group"><label for="programDuration">مدة البرنامج</label><select id="programDuration"><option value="4">4 أسابيع</option><option value="8" selected>8 أسابيع</option><option value="12">12 أسبوعاً</option></select></div>
+            <div class="form-group"><label for="sessionsPerWeek">الحصص في الأسبوع</label><select id="sessionsPerWeek"><option value="2">حصتان</option><option value="3" selected>3 حصص</option><option value="4">4 حصص</option><option value="5">5 حصص</option><option value="6">6 حصص</option></select></div>
+          </div>
+          <div class="builder-exercise-form">
+            <h4>إضافة تمرين إلى الحصة</h4>
+            <div class="builder-fields">
+              <div class="form-group"><label for="builderExercise">التمرين</label><select id="builderExercise"></select></div>
+              <div class="form-group"><label for="builderSets">المجموعات</label><input id="builderSets" type="number" min="1" max="20" value="3" /></div>
+              <div class="form-group"><label for="builderReps">التكرارات / المدة</label><input id="builderReps" type="text" maxlength="30" value="10-12" /></div>
+              <div class="form-group"><label for="builderRest">الراحة (ثانية)</label><input id="builderRest" type="number" min="0" max="900" value="60" /></div>
+            </div>
+            <button id="addBuilderExercise" class="btn btn-primary" type="button">إضافة التمرين</button>
+          </div>
+          <div class="panel-head builder-list-head"><h4>محتوى البرنامج</h4><span id="builderExerciseCount" class="tag">0 تمارين</span></div>
+          <div id="builderExerciseList" class="builder-exercise-list"><p class="empty-state">لم تضف تمارين بعد. اختر تمريناً من القائمة أعلاه.</p></div>
+          <div class="today-actions"><button id="saveProgramBtn" class="btn btn-primary" type="button">حفظ البرنامج على هذا الجهاز</button><button id="exportProgramBtn" class="btn btn-ghost" type="button">تصدير البرنامج JSON</button></div>
+          <div class="saved-programs-wrap"><h4>البرامج المحفوظة</h4><div id="savedProgramsList" class="saved-programs-list"></div></div>
+          <p class="section-note">هذه النسخة تحفظ البرامج محلياً في المتصفح فقط؛ لا يوجد حتى الآن حساب مدرب أو مزامنة سحابية أو نظام اشتراكات.</p>
         </section>
 
         <section id="nutrition" class="panel hidden-panel">
