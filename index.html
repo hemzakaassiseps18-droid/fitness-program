@@ -24,6 +24,7 @@
           <button class="nav-item" data-target="tracker">متتبع اليوم</button>
           <button class="nav-item" data-target="library">مكتبة التمارين</button>
           <button class="nav-item" data-target="builder">منشئ البرامج</button>
+          <button class="nav-item" data-target="clients">المتدربون</button>
           <button class="nav-item" data-target="nutrition">التغذية</button>
         </nav>
         <div class="mini-card">
@@ -119,22 +120,24 @@
             <div class="form-group"><label for="sessionsPerWeek">الحصص في الأسبوع</label><select id="sessionsPerWeek"><option value="2">حصتان</option><option value="3" selected>3 حصص</option><option value="4">4 حصص</option><option value="5">5 حصص</option><option value="6">6 حصص</option></select></div>
           </div>
           <div class="builder-exercise-form">
-            <h4>إضافة تمرين إلى الحصة</h4>
+            <h4>إعداد الحصة وإضافة التمارين</h4>
+            <div class="builder-fields"><div class="form-group"><label for="builderDay">يوم الحصة</label><select id="builderDay"><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option><option>السبت</option></select></div><div class="form-group"><label for="builderSessionName">اسم الحصة</label><input id="builderSessionName" maxlength="50" placeholder="مثال: الجزء العلوي A" /></div></div>
             <div class="builder-fields">
               <div class="form-group"><label for="builderExercise">التمرين</label><select id="builderExercise"></select></div>
               <div class="form-group"><label for="builderSets">المجموعات</label><input id="builderSets" type="number" min="1" max="20" value="3" /></div>
               <div class="form-group"><label for="builderReps">التكرارات / المدة</label><input id="builderReps" type="text" maxlength="30" value="10-12" /></div>
-              <div class="form-group"><label for="builderRest">الراحة (ثانية)</label><input id="builderRest" type="number" min="0" max="900" value="60" /></div>
+              <div class="form-group"><label for="builderRest">الراحة (ثانية)</label><input id="builderRest" type="number" min="0" max="900" value="60" /></div><div class="form-group"><label for="builderImageUrl">رابط صورة التمرين</label><input id="builderImageUrl" type="url" placeholder="https://..." /></div><div class="form-group"><label for="builderVideoUrl">رابط فيديو التمرين</label><input id="builderVideoUrl" type="url" placeholder="YouTube / Vimeo / MP4" /></div>
             </div>
             <button id="addBuilderExercise" class="btn btn-primary" type="button">إضافة التمرين</button>
           </div>
           <div class="panel-head builder-list-head"><h4>محتوى البرنامج</h4><span id="builderExerciseCount" class="tag">0 تمارين</span></div>
-          <div id="builderExerciseList" class="builder-exercise-list"><p class="empty-state">لم تضف تمارين بعد. اختر تمريناً من القائمة أعلاه.</p></div>
-          <div class="today-actions"><button id="saveProgramBtn" class="btn btn-primary" type="button">حفظ البرنامج على هذا الجهاز</button><button id="exportProgramBtn" class="btn btn-ghost" type="button">تصدير البرنامج JSON</button></div>
+          <div id="builderExerciseList" class="builder-exercise-list"><p class="empty-state">لم تضف تمارين بعد. اختر تمريناً وحدد يوم الحصة.</p></div><div class="progression-preview"><div class="panel-head split-head"><h4>معاينة التدرج الأسبوعي</h4><select id="progressionWeek" aria-label="اختر أسبوع المعاينة"><option value="1">الأسبوع 1</option></select></div><div id="progressionPreview"></div></div><details class="coach-branding"><summary>بيانات المدرب وشعار ملف PDF</summary><div class="builder-settings"><div class="form-group"><label for="coachName">اسم المدرب / الأكاديمية</label><input id="coachName" maxlength="80" /></div><div class="form-group"><label for="coachPhone">الهاتف</label><input id="coachPhone" maxlength="30" /></div><div class="form-group"><label for="coachEmail">البريد الإلكتروني</label><input id="coachEmail" type="email" maxlength="100" /></div><div class="form-group"><label for="coachLogo">شعار المدرب</label><input id="coachLogo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" /></div></div><button id="saveCoachProfile" class="btn btn-soft" type="button">حفظ هوية المدرب</button></details>
+          <div class="today-actions"><button id="saveProgramBtn" class="btn btn-primary" type="button">حفظ البرنامج على هذا الجهاز</button><button id="exportProgramBtn" class="btn btn-ghost" type="button">تصدير البرنامج JSON</button><button id="printProgramBtn" class="btn btn-soft" type="button">تصدير PDF / طباعة</button></div>
           <div class="saved-programs-wrap"><h4>البرامج المحفوظة</h4><div id="savedProgramsList" class="saved-programs-list"></div></div>
           <p class="section-note">هذه النسخة تحفظ البرامج محلياً في المتصفح فقط؛ لا يوجد حتى الآن حساب مدرب أو مزامنة سحابية أو نظام اشتراكات.</p>
         </section>
 
+<section id="clients" class="panel hidden-panel"><div class="panel-head"><h3>ملفات المتدربين</h3></div><div class="builder-exercise-form"><h4>إضافة متدرب أو تحديث ملفه</h4><div class="builder-settings"><div class="form-group"><label for="clientName">الاسم الكامل</label><input id="clientName" maxlength="90" /></div><div class="form-group"><label for="clientAge">العمر</label><input id="clientAge" type="number" min="10" max="100" /></div><div class="form-group"><label for="clientPhone">الهاتف</label><input id="clientPhone" maxlength="30" /></div><div class="form-group"><label for="clientGoal">الهدف التدريبي</label><select id="clientGoal"><option>تحسين اللياقة</option><option>خسارة الدهون</option><option>زيادة الكتلة العضلية</option><option>زيادة القوة</option><option>الصحة العامة</option><option>أخرى</option></select></div><div class="form-group"><label for="clientProgram">البرنامج المرتبط</label><select id="clientProgram"><option value="">بدون برنامج</option></select></div></div><button id="saveClientBtn" class="btn btn-primary" type="button">حفظ ملف المتدرب</button><button id="cancelClientEdit" class="btn btn-ghost" type="button">إلغاء التعديل</button></div><div class="panel-head builder-list-head"><h4>قائمة المتدربين</h4><span id="clientCount" class="tag">0 متدربين</span></div><div id="clientsList" class="saved-programs-list"></div><p class="section-note">تحفظ هذه النسخة بيانات المتدربين محلياً في المتصفح فقط. لا تخزن بيانات طبية أو حساسة؛ سنضيف قاعدة بيانات آمنة ومزامنة لاحقاً.</p></section>
         <section id="nutrition" class="panel hidden-panel">
           <div class="panel-head"><h3>أفكار وجبات متوازنة</h3></div>
           <div class="nutrition-layout">
