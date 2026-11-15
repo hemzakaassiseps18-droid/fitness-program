@@ -603,3 +603,7 @@ button, input {
  .saved-program-actions { width:100%; }
  .saved-program-actions .btn { flex:1; }
 }
+
+/* K6 studio schedule, progression, media, coach PDF and clients */
+.builder-session{border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}.builder-session-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:8px}.builder-session-head strong{color:var(--primary)}.exercise-thumb{display:block;width:110px;height:75px;object-fit:cover;border-radius:9px;margin:8px 0}.media-link{display:block;color:var(--secondary);font-size:.85rem;margin-top:5px}.progression-preview,.coach-branding{margin-top:20px;padding:15px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}.progression-preview .panel-head{margin-bottom:12px}.progression-preview select{background:#101b2d;color:var(--text);border:1px solid var(--line);padding:8px;border-radius:10px}.progression-line{padding:8px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:.88rem;line-height:1.7}.coach-branding summary{cursor:pointer;font-weight:700;color:var(--primary)}.coach-branding .builder-settings{margin-top:15px}
+@media(max-width:620px){.builder-session-head{align-items:flex-start}.builder-session-head .btn{padding:7px 9px;font-size:.75rem}.progression-preview{padding:12px}.saved-program-row{flex-direction:column;align-items:flex-start}}
