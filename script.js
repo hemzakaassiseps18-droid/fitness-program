@@ -248,12 +248,164 @@
     updateStats();
   }
 
+
+  const EXERCISES = [
+    {id:"pushup",name:"تمرين الضغط",muscle:"الصدر",equipment:"وزن الجسم",level:"مبتدئ"},
+    {id:"bench",name:"ضغط الصدر بالدمبل",muscle:"الصدر",equipment:"دمبل",level:"متوسط"},
+    {id:"row",name:"سحب الدمبل",muscle:"الظهر",equipment:"دمبل",level:"مبتدئ"},
+    {id:"latpull",name:"السحب العلوي",muscle:"الظهر",equipment:"آلة",level:"مبتدئ"},
+    {id:"squat",name:"القرفصاء",muscle:"الأرجل",equipment:"وزن الجسم",level:"مبتدئ"},
+    {id:"lunge",name:"اندفاع أمامي",muscle:"الأرجل",equipment:"وزن الجسم",level:"مبتدئ"},
+    {id:"rdl",name:"رفعة رومانية",muscle:"الأرجل",equipment:"دمبل",level:"متوسط"},
+    {id:"shoulder",name:"ضغط الكتف",muscle:"الأكتاف",equipment:"دمبل",level:"متوسط"},
+    {id:"lateral",name:"رفع جانبي",muscle:"الأكتاف",equipment:"دمبل",level:"مبتدئ"},
+    {id:"curl",name:"ثني الذراع",muscle:"الذراعان",equipment:"دمبل",level:"مبتدئ"},
+    {id:"triceps",name:"مد الذراع للخلف",muscle:"الذراعان",equipment:"دمبل",level:"مبتدئ"},
+    {id:"plank",name:"بلانك",muscle:"البطن",equipment:"وزن الجسم",level:"مبتدئ"},
+    {id:"deadbug",name:"Dead Bug",muscle:"البطن",equipment:"وزن الجسم",level:"مبتدئ"},
+    {id:"walk",name:"مشي سريع",muscle:"القلب والتنفس",equipment:"بدون معدات",level:"مبتدئ"},
+    {id:"bike",name:"دراجة ثابتة",muscle:"القلب والتنفس",equipment:"دراجة",level:"مبتدئ"}
+  ];
+  const BUILDER_STORAGE = "k6-studio-programs";
+  let builderExercises = [];
+  let savedPrograms = read(BUILDER_STORAGE, []);
+  if (!Array.isArray(savedPrograms)) savedPrograms = [];
+
+  function renderExerciseLibrary() {
+    const mount = $("exerciseLibraryGrid");
+    if (!mount) return;
+    const query = ($("exerciseSearch")?.value || "").trim().toLocaleLowerCase();
+    const muscle = $("muscleFilter")?.value || "";
+    const matches = EXERCISES.filter(item =>
+      (!muscle || item.muscle === muscle) &&
+      (!query || (item.name + " " + item.muscle + " " + item.equipment).toLocaleLowerCase().includes(query))
+    );
+    mount.replaceChildren();
+    if (!matches.length) {
+      const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "لا توجد تمارين مطابقة لبحثك."; mount.appendChild(empty); return;
+    }
+    matches.forEach(item => {
+      const card = document.createElement("article"); card.className = "exercise-card";
+      const title = document.createElement("h4"); title.textContent = item.name;
+      const meta = document.createElement("p"); meta.textContent = item.muscle + " · " + item.equipment;
+      const level = document.createElement("span"); level.className = "tag"; level.textContent = item.level;
+      card.append(title, meta, level); mount.appendChild(card);
+    });
+  }
+
+  function renderBuilderSelect() {
+    const select = $("builderExercise");
+    if (!select) return;
+    select.replaceChildren();
+    EXERCISES.forEach(item => {
+      const option = document.createElement("option"); option.value = item.id; option.textContent = item.name + " — " + item.muscle; select.appendChild(option);
+    });
+  }
+
+  function renderBuilderExercises() {
+    const mount = $("builderExerciseList");
+    if (!mount) return;
+    mount.replaceChildren();
+    $("builderExerciseCount").textContent = builderExercises.length + " تمارين";
+    if (!builderExercises.length) {
+      const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "لم تضف تمارين بعد. اختر تمريناً من القائمة أعلاه."; mount.appendChild(empty); return;
+    }
+    builderExercises.forEach((item, index) => {
+      const row = document.createElement("article"); row.className = "builder-exercise-row";
+      const info = document.createElement("div");
+      const name = document.createElement("strong"); name.textContent = item.name;
+      const detail = document.createElement("p"); detail.textContent = item.sets + " مجموعات × " + item.reps + " · راحة " + item.rest + " ثانية";
+      info.append(name, detail);
+      const remove = document.createElement("button"); remove.type = "button"; remove.className = "btn btn-ghost remove-exercise"; remove.textContent = "حذف";
+      remove.setAttribute("aria-label", "حذف " + item.name);
+      remove.addEventListener("click", () => { builderExercises.splice(index, 1); renderBuilderExercises(); });
+      row.append(info, remove); mount.appendChild(row);
+    });
+  }
+
+  function renderSavedPrograms() {
+    const mount = $("savedProgramsList");
+    if (!mount) return;
+    mount.replaceChildren();
+    if (!savedPrograms.length) {
+      const empty = document.createElement("p"); empty.className = "empty-state"; empty.textContent = "لا توجد برامج محفوظة بعد."; mount.appendChild(empty); return;
+    }
+    savedPrograms.forEach((program, index) => {
+      const row = document.createElement("article"); row.className = "saved-program-row";
+      const info = document.createElement("div");
+      const name = document.createElement("strong"); name.textContent = program.name;
+      const meta = document.createElement("p"); meta.textContent = program.duration + " أسابيع · " + program.sessions + " حصص أسبوعياً · " + program.exercises.length + " تمارين";
+      info.append(name, meta);
+      const actions = document.createElement("div"); actions.className = "saved-program-actions";
+      const loadBtn = document.createElement("button"); loadBtn.type = "button"; loadBtn.className = "btn btn-soft"; loadBtn.textContent = "فتح";
+      loadBtn.addEventListener("click", () => {
+        $("programName").value = program.name; $("programDuration").value = String(program.duration); $("sessionsPerWeek").value = String(program.sessions);
+        builderExercises = program.exercises.map(item => ({...item})); renderBuilderExercises();
+      });
+      const deleteBtn = document.createElement("button"); deleteBtn.type = "button"; deleteBtn.className = "btn btn-ghost"; deleteBtn.textContent = "حذف";
+      deleteBtn.addEventListener("click", () => {
+        if (!confirm("هل تريد حذف هذا البرنامج المحفوظ؟")) return;
+        savedPrograms.splice(index, 1); write(BUILDER_STORAGE, savedPrograms); renderSavedPrograms();
+      });
+      actions.append(loadBtn, deleteBtn); row.append(info, actions); mount.appendChild(row);
+    });
+  }
+
+  function buildProgramPayload() {
+    const name = ($("programName")?.value || "").trim();
+    if (!name) { alert("يرجى كتابة اسم البرنامج."); return null; }
+    if (!builderExercises.length) { alert("أضف تمريناً واحداً على الأقل قبل الحفظ."); return null; }
+    return {
+      id: (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
+      name, duration: number($("programDuration").value, 8),
+      sessions: number($("sessionsPerWeek").value, 3),
+      exercises: builderExercises.map(item => ({...item})),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function bindProgramBuilder() {
+    if (!$("builderExercise")) return;
+    renderBuilderSelect(); renderExerciseLibrary(); renderBuilderExercises(); renderSavedPrograms();
+    $("exerciseSearch")?.addEventListener("input", renderExerciseLibrary);
+    $("muscleFilter")?.addEventListener("change", renderExerciseLibrary);
+    $("addBuilderExercise")?.addEventListener("click", () => {
+      const exercise = EXERCISES.find(item => item.id === $("builderExercise").value);
+      const sets = number($("builderSets").value, NaN);
+      const rest = number($("builderRest").value, NaN);
+      const reps = ($("builderReps").value || "").trim();
+      if (!exercise || !Number.isInteger(sets) || sets < 1 || sets > 20 || !Number.isInteger(rest) || rest < 0 || rest > 900 || !reps) {
+        alert("تحقق من التمرين والمجموعات والتكرارات ومدة الراحة."); return;
+      }
+      builderExercises.push({ ...exercise, sets, reps, rest });
+      renderBuilderExercises();
+    });
+    $("saveProgramBtn")?.addEventListener("click", () => {
+      const program = buildProgramPayload(); if (!program) return;
+      const existing = savedPrograms.findIndex(item => item.name.toLocaleLowerCase() === program.name.toLocaleLowerCase());
+      if (existing >= 0) {
+        if (!confirm("يوجد برنامج بالاسم نفسه. هل تريد استبداله؟")) return;
+        savedPrograms[existing] = program;
+      } else savedPrograms.push(program);
+      write(BUILDER_STORAGE, savedPrograms); renderSavedPrograms();
+      alert("تم حفظ البرنامج على هذا الجهاز.");
+    });
+    $("exportProgramBtn")?.addEventListener("click", () => {
+      const program = buildProgramPayload(); if (!program) return;
+      const blob = new Blob([JSON.stringify(program, null, 2)], {type:"application/json;charset=utf-8"});
+      const url = URL.createObjectURL(blob); const link = document.createElement("a");
+      link.href = url; link.download = "k6-program-" + dateKey() + ".json";
+      document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    });
+  }
+
   function init() {
     bindNavigation();
     bindWeekNavigation();
     bindDailyForm();
     bindHabits();
     bindReset();
+    bindProgramBuilder();
     $("saveAllBtn")?.addEventListener("click", () => {
       savePlan();
       alert("تم حفظ التقدم بنجاح.");
